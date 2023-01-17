@@ -1,15 +1,22 @@
 #!/usr/bin/python3
 
 import botogram
-import os
 import subprocess
 
 bot = botogram.create("5814099651:AAGL4500bbbNOo9MC_OIQYFTzcEdJY7EN3g")
+pid = "/tmp/telegrambot.pid"
+
+def checkid(id):
+    if (id != 150816282):
+        chat.send("Utente non autorizzato")
+        return False
+    return True
 
 #funzioni
 @bot.command("temperatura")
 def showTemp(chat, message, args):
     """Mostra la temperatura della CPU"""
+    if not (checkid(message.sender.id)): return
     try:
         command = "vcgencmd measure_temp"
         sub_ = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
@@ -17,7 +24,7 @@ def showTemp(chat, message, args):
         output = subprocess_return.decode("utf-8")
         chat.send(output)
     except:
-        return "C'è stato un errore nell'esecuzione del comando"
+        chat.send("C'è stato un errore nell'esecuzione del comando")
 
 
 
@@ -38,6 +45,7 @@ def checkTemp(bot):
 @bot.command("startaltserver")
 def startaltserver(chat, message, args):
     """ Avvia altserver """
+    if not (checkid(message.sender.id)): return 
     try:
         command = "./run.sh"
         sub_ = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, cwd="/home/pi/altserver")
@@ -50,6 +58,7 @@ def startaltserver(chat, message, args):
 @bot.command("stopaltserver")
 def stopaltserver(chat, message, args):
     """ Ferma altserver """
+    if not (checkid(message.sender.id)): return    
     try:
         command1 = "screen -S altserver -X quit"
         command2 = "screen -S netmuxd -X quit"
@@ -63,6 +72,7 @@ def stopaltserver(chat, message, args):
 @bot.command("usage")
 def usage(chat, message, args):
     """ Mostra statistiche sull'utilizzo delle risorse di sistema """
+    if not (checkid(message.sender.id)): return
     try:
         command_cpu = "top -n 1 -b | awk '/^%Cpu/{print $2}'"
         command_mem = "free | grep Mem | awk '{print $3/$2 * 100.0}'"
@@ -95,5 +105,8 @@ def usage(chat, message, args):
 
             
 
-if __name__ == "__main__":
+def runBot():
     bot.run()
+
+if __name__ == "__main__":
+    runBot()
