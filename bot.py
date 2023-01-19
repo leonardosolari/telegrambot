@@ -13,6 +13,21 @@ def checkid(id):
     return True
 
 #funzioni
+
+@bot.command("wake")
+def wake(chat, message, args):
+    """ Sveglia il bot """
+    if not (checkid(message.sender.id)): return
+    connected = False
+    while not connected:
+        try:
+            chat.send("Connesso!")
+            connected = True
+        except:
+            chat.send("Tentativo di connessione...")
+            pass 
+
+
 @bot.command("temperatura")
 def showTemp(chat, message, args):
     """Mostra la temperatura della CPU"""
