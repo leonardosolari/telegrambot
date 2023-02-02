@@ -15,21 +15,26 @@ def checkid(id):
     else:
         return True
 
+def ping(chat, message, args, times):
+    for i in range(times):
+        if not (checkid(message.sender.id)): 
+            chat.send("Utente non autorizzato")
+            return
+        connected = False
+        while not connected:
+            try:
+                chat.send("Connesso!")
+                connected = True
+            except:
+                chat.send("Tentativo di connessione...")
+                pass
+
 #funzioni
 
 @bot.command("wake")
 def wake(chat, message, args):
-    if not (checkid(message.sender.id)): 
-        chat.send("Utente non autorizzato")
-        return
-    connected = False
-    while not connected:
-        try:
-            chat.send("Connesso!")
-            connected = True
-        except:
-            chat.send("Tentativo di connessione...")
-            pass 
+    ping(chat, message, args, 3)
+    
 
 
 @bot.command("temperatura")
@@ -85,8 +90,8 @@ def stopaltserver(chat, message, args):
         chat.send("Utente non autorizzato")
         return   
     try:
-        command1 = "screen -S altserver -X quit"
-        command2 = "screen -S netmuxd -X quit"
+        command1 = """for session in $(screen -ls | grep -o '[0-9]*\.altserver'); do screen -S "${session}" -X quit; done"""
+        command2 = """for session in $(screen -ls | grep -o '[0-9]*\.netmuxd'); do screen -S "${session}" -X quit; done"""
         sub_ = subprocess.Popen(command1, shell=True, stdout=subprocess.PIPE)
         sub_ = subprocess.Popen(command2, shell=True, stdout=subprocess.PIPE)
         chat.send("Altserver fermato")
